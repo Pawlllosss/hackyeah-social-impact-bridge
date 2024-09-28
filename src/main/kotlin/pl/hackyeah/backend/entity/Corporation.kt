@@ -23,7 +23,7 @@ data class Corporation(
     @SerializedName("updated_at") @Serializable(with = InstantSerializer::class) val updatedAt: Instant,
     val desc: String,
     val categories: Set<String>,
-//    val available: Instant,
+    @Serializable(with = InstantSerializer::class) val deadline: Instant,
     val city: String,
     val image: String,
     @SerializedName("min_budget") val minBudget: Long,
