@@ -4,6 +4,8 @@ FROM openjdk:21-jdk
 # Step 2: Set the working directory in the container
 WORKDIR /app
 
+RUN mkdir -p /app
+
 # Step 3: Copy the build artifacts from the host to the container
 # This assumes your Kotlin Spring Boot app has been built into a JAR file
 COPY build/libs/backend-0.0.1-SNAPSHOT.jar /app/backend-0.0.1-SNAPSHOT.jar
