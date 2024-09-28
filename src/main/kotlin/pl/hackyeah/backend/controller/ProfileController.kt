@@ -24,8 +24,8 @@ class ProfileController(
             val charity = charitiesService.getCharity(userId)
             return charity?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
         } else if (profileType == ProfileType.CORPORATE) {
-//            val corporation = corporationService.
-            return ResponseEntity.notFound().build()
+            val corporation = corporationService.getCorporation(userId)
+            return corporation?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
         }
 
         return ResponseEntity.notFound().build()

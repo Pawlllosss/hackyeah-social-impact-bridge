@@ -80,7 +80,7 @@ data class Charity(
 
         private val OBJECT_MAPPER = jacksonObjectMapper()
 
-        fun fromDynamoDbResult(dynamoDbResult: Map<String, AttributeValue>): Charity? {
+        fun fromDynamoDbResult(dynamoDbResult: Map<String, AttributeValue>): Charity {
             val createdAt = dynamoDbResult[CREATED_AT]!!.s
             val updatedAt = dynamoDbResult[UPDATED_AT]!!.s
             val available = dynamoDbResult[AVAILABLE]!!.s
@@ -108,7 +108,7 @@ data class Charity(
 
     fun toMap(): Map<String, AttributeValue> {
         return mapOf(
-            DYNAMO_DB_PRIMARY_KEY to AttributeValue(charityId.toString()),
+            DYNAMO_DB_PRIMARY_KEY to AttributeValue(charityId),
             NAME to AttributeValue(name),
             CREATED_AT to AttributeValue(createdAt.toString()),
             UPDATED_AT to AttributeValue(updatedAt.toString()),

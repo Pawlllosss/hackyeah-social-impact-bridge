@@ -11,4 +11,8 @@ class CorporationService(private val corporationRepository: CorporationRepositor
     fun createCorporation(corporation: Corporation): String {
         return corporationRepository.save(corporation)
     }
+
+    fun getCorporation(corporationId: String): Corporation? {
+        return corporationRepository.get(corporationId)
+    }
 }
