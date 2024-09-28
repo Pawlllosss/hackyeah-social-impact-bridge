@@ -2,6 +2,8 @@ package pl.hackyeah.backend.entity
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -42,6 +44,8 @@ object InstantSerializer : KSerializer<Instant> {
 }
 
 
+private const val s = "name"
+
 @DynamoDBTable(tableName = "corporations")
 @Serializable
 data class Charity(
@@ -51,7 +55,7 @@ data class Charity(
     @SerializedName("updated_at") @Serializable(with = InstantSerializer::class) val updatedAt: Instant = Instant.now(),
     @Serializable(with = InstantSerializer::class) val available: Instant,
     val desc: String,
-    val categories: Set<String>,
+    val categories: List<String>,
     val city: String,
     val image: String,
     @SerializedName("min_budget") val minBudget: Long,
@@ -59,20 +63,63 @@ data class Charity(
     @SerializedName("_geoloc") val geoLocation: List<GeoLocation>,
 
     ) {
+
+    companion object {
+        const val DYNAMO_DB_PRIMARY_KEY = "charity_id"
+        private const val NAME = "name"
+        private const val CREATED_AT = "created_at"
+        private const val UPDATED_AT = "updated_at"
+        private const val AVAILABLE = "available"
+        private const val DESC = "desc"
+        private const val CATEGORIES = "categories"
+        private const val CITY = "city"
+        private const val IMAGE = "image"
+        private const val MIN_BUDGET = "min_budget"
+        private const val MAX_BUDGET = "max_budget"
+        private const val GEOLOC = "geoloc"
+
+        private val OBJECT_MAPPER = jacksonObjectMapper()
+
+        fun fromDynamoDbResult(dynamoDbResult: Map<String, AttributeValue>): Charity? {
+            val createdAt = dynamoDbResult[CREATED_AT]!!.s
+            val updatedAt = dynamoDbResult[UPDATED_AT]!!.s
+            val available = dynamoDbResult[AVAILABLE]!!.s
+            val categories = dynamoDbResult[CATEGORIES]!!.l
+                .map { it.s }
+                .filterNotNull()
+            val geoLoc = OBJECT_MAPPER.readValue<List<GeoLocation>>(dynamoDbResult[GEOLOC]!!.s)
+
+            return Charity(
+                dynamoDbResult[DYNAMO_DB_PRIMARY_KEY]!!.s,
+                dynamoDbResult[NAME]!!.s,
+                Instant.parse(createdAt),
+                Instant.parse(updatedAt),
+                Instant.parse(available),
+                dynamoDbResult[DESC]!!.s,
+                categories,
+                dynamoDbResult[CITY]!!.s,
+                dynamoDbResult[IMAGE]!!.s,
+                dynamoDbResult[MIN_BUDGET]!!.n.toLong(),
+                dynamoDbResult[MAX_BUDGET]!!.n.toLong(),
+                geoLoc
+            )
+        }
+    }
+
     fun toMap(): Map<String, AttributeValue> {
         return mapOf(
-            "charity_id" to AttributeValue(charityId.toString()),
-            "name" to AttributeValue(name),
-            "created_at" to AttributeValue(createdAt.toString()),
-            "updated_at" to AttributeValue(updatedAt.toString()),
-            "available" to AttributeValue(available.toString()),
-            "desc" to AttributeValue(desc),
-            "categories" to AttributeValue(categories.toString()),
-            "city" to AttributeValue(city),
-            "image" to AttributeValue(image),
-            "min_budget" to AttributeValue(minBudget.toString()),
-            "max_budget" to AttributeValue(maxBudget.toString()),
-            "geoloc" to AttributeValue(geoLocation.toString())
+            DYNAMO_DB_PRIMARY_KEY to AttributeValue(charityId.toString()),
+            NAME to AttributeValue(name),
+            CREATED_AT to AttributeValue(createdAt.toString()),
+            UPDATED_AT to AttributeValue(updatedAt.toString()),
+            AVAILABLE to AttributeValue(available.toString()),
+            DESC to AttributeValue(desc),
+            CATEGORIES to AttributeValue().withL(categories.map { AttributeValue(it) }),
+            CITY to AttributeValue(city),
+            IMAGE to AttributeValue(image),
+            MIN_BUDGET to AttributeValue().withN(minBudget.toString()),
+            MAX_BUDGET to AttributeValue().withN(maxBudget.toString()),
+            GEOLOC to AttributeValue(OBJECT_MAPPER.writeValueAsString(geoLocation))
         )
     }
 }

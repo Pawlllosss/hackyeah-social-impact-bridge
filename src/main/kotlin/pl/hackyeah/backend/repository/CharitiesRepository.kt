@@ -2,13 +2,14 @@ package pl.hackyeah.backend.repository
 
 import com.algolia.client.api.SearchClient
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
+import com.amazonaws.services.dynamodbv2.model.AttributeValue
+import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import org.springframework.stereotype.Repository
 import pl.hackyeah.backend.entity.Charity
-import java.util.UUID
 
 @Repository
 class CharitiesRepository(
@@ -16,10 +17,18 @@ class CharitiesRepository(
     private val searchClient: SearchClient,
 ) {
 
-
     companion object {
         private const val CHARITIES_INDEX = "charities"
         private const val CHARITY_TABLE = "charities"
+    }
+
+    fun get(charityId: String): Charity? {
+        val partitionKey = mapOf(Charity.DYNAMO_DB_PRIMARY_KEY to AttributeValue(charityId))
+        val dynamoDbResult = dynamoDb.getItem(
+            GetItemRequest(CHARITY_TABLE, partitionKey)
+        )
+
+        return dynamoDbResult?.let { Charity.fromDynamoDbResult(it.item) }
     }
 
     fun save(charity: Charity): String {
