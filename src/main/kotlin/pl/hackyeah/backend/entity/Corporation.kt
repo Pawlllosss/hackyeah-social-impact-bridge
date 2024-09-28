@@ -3,13 +3,7 @@ package pl.hackyeah.backend.entity
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import java.time.Instant
 import java.util.*
 
@@ -17,10 +11,10 @@ import java.util.*
 @DynamoDBTable(tableName = "corporations")
 @Serializable
 data class Corporation(
-    @SerializedName("objectID") @Serializable(with = UUIDSerializer::class) val charityId: UUID = UUID.randomUUID(),
+    @SerializedName("objectID") @Serializable(with = UUIDSerializer::class) val corporateId: UUID = UUID.randomUUID(),
     val name: String,
-    @SerializedName("created_at") @Serializable(with = InstantSerializer::class) val createdAt: Instant,
-    @SerializedName("updated_at") @Serializable(with = InstantSerializer::class) val updatedAt: Instant,
+    @SerializedName("created_at") @Serializable(with = InstantSerializer::class) val createdAt: Instant = Instant.now(),
+    @SerializedName("updated_at") @Serializable(with = InstantSerializer::class) val updatedAt: Instant = Instant.now(),
     val desc: String,
     val categories: Set<String>,
     @Serializable(with = InstantSerializer::class) val deadline: Instant,
@@ -33,10 +27,11 @@ data class Corporation(
     ) {
     fun toMap(): Map<String, AttributeValue> {
         return mapOf(
-            "corporate_id" to AttributeValue(charityId.toString()),
+            "corporate_id" to AttributeValue(corporateId.toString()),
             "name" to AttributeValue(name),
             "created_at" to AttributeValue(createdAt.toString()),
             "updated_at" to AttributeValue(updatedAt.toString()),
+            "deadline" to AttributeValue(deadline.toString()),
             "desc" to AttributeValue(desc),
             "categories" to AttributeValue(categories.toString()),
             "city" to AttributeValue(city),

@@ -6,17 +6,16 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pl.hackyeah.backend.entity.Corporation
-import pl.hackyeah.backend.service.CharitiesService
+import pl.hackyeah.backend.service.CorporationService
 
 @RestController
 @RequestMapping("/corporations")
-class CorporationsController(private val charitiesService: CharitiesService) {
+class CorporationsController(private val corporationService: CorporationService) {
 
     @PostMapping
-    fun addCorporation(@RequestBody corporation: Corporation): ResponseEntity<CharitiesResponseDto> {
-//        val corporateId = charitiesService.createCharity(corporation)
+    fun addCorporation(@RequestBody corporation: Corporation): ResponseEntity<CorporationResponseDto> {
+        val corporateId = corporationService.createCorporation(corporation)
 
-        return ResponseEntity.notFound().build()
-//        return corporateId?.let { ResponseEntity.ok(CharitiesResponseDto(it)) } ?: ResponseEntity.notFound().build()
+        return corporateId?.let { ResponseEntity.ok(CorporationResponseDto(it)) } ?: ResponseEntity.notFound().build()
     }
 }
