@@ -8,9 +8,7 @@ import java.util.UUID
 @Service
 class CorporationService(private val corporationRepository: CorporationRepository) {
 
-    fun createCorporation(corporation: Corporation): UUID? {
-        val id = UUID.randomUUID()
-
-        return corporationRepository.save(corporation.copy(corporateId = id))
+    fun createCorporation(corporation: Corporation): String {
+        return corporationRepository.save(corporation)
     }
 }

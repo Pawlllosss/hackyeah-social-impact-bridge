@@ -45,7 +45,7 @@ object InstantSerializer : KSerializer<Instant> {
 @DynamoDBTable(tableName = "corporations")
 @Serializable
 data class Charity(
-    @SerializedName("objectID") @Serializable(with = UUIDSerializer::class) val charityId: UUID = UUID.randomUUID(),
+    @SerializedName("objectID") val charityId: String,
     val name: String,
     @SerializedName("created_at") @Serializable(with = InstantSerializer::class) val createdAt: Instant = Instant.now(),
     @SerializedName("updated_at") @Serializable(with = InstantSerializer::class) val updatedAt: Instant = Instant.now(),

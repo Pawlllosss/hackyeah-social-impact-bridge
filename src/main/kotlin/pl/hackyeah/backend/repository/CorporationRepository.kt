@@ -22,7 +22,7 @@ class CorporationRepository(
         private const val CORPORATIONS_TABLE = "corporations"
     }
 
-    fun save(corporation: Corporation): UUID? {
+    fun save(corporation: Corporation): String {
         val itemValues = corporation.toMap()
         val result = dynamoDb.putItem(CORPORATIONS_TABLE, itemValues)
 

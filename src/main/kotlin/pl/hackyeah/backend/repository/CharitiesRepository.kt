@@ -22,7 +22,7 @@ class CharitiesRepository(
         private const val CHARITY_TABLE = "charities"
     }
 
-    fun save(charity: Charity): UUID? {
+    fun save(charity: Charity): String {
         val itemValues = charity.toMap()
         val result = dynamoDb.putItem(CHARITY_TABLE, itemValues)
 
