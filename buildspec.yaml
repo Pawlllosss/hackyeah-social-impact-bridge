@@ -1,0 +1,10 @@
+version: 0.1
+phases:
+  build:
+    commands:
+      - echo building and running tests
+      - ./gradlew test bootJar
+artifacts:
+  files:
+    - build/libs/demo-0.0.1-SNAPSHOT.jar
+  discard-paths: yes
