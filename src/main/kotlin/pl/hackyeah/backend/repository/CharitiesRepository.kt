@@ -29,7 +29,7 @@ class CharitiesRepository(
             GetItemRequest(CHARITY_TABLE, partitionKey)
         )
 
-        return dynamoDbResult?.let { Charity.fromDynamoDbResult(it.item) }
+        return dynamoDbResult.item?.let { Charity.fromDynamoDbResult(it) }
     }
 
     fun save(charity: Charity): String {

@@ -29,7 +29,7 @@ class CorporationRepository(
             GetItemRequest(CORPORATIONS_TABLE, partitionKey)
         )
 
-        return dynamoDbResult?.let { Corporation.fromDynamoDbResult(it.item) }
+        return dynamoDbResult.item?.let { Corporation.fromDynamoDbResult(it) }
     }
 
     fun save(corporation: Corporation): String {
