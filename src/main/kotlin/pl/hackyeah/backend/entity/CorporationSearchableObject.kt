@@ -1,12 +1,8 @@
 package pl.hackyeah.backend.entity
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
-import com.amazonaws.services.dynamodbv2.model.AttributeValue
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
-import java.time.Instant
 import java.util.*
 
 
@@ -22,8 +18,7 @@ data class CorporationSearchableObject(
     val deadline: Long,
     val city: String,
     val image: String,
-    @SerializedName("min_budget") val minBudget: Long,
-    @SerializedName("max_budget") val maxBudget: Long,
+    val budget: Long,
     @SerializedName("_geoloc") val geoLocation: List<GeoLocation>,
 
     ) {
@@ -40,8 +35,7 @@ data class CorporationSearchableObject(
                 corporation.deadline.epochSecond,
                 corporation.city,
                 corporation.image,
-                corporation.minBudget,
-                corporation.maxBudget,
+                corporation.budget,
                 corporation.geoLocation
             )
     }

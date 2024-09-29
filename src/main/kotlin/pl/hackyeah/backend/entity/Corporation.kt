@@ -25,8 +25,7 @@ data class Corporation(
     val phone: String,
     val website: String,
     val image: String,
-    @SerializedName("min_budget") val minBudget: Long,
-    @SerializedName("max_budget") val maxBudget: Long,
+    val budget: Long,
     @SerializedName("_geoloc") val geoLocation: List<GeoLocation>,
 
     ) {
@@ -45,8 +44,7 @@ data class Corporation(
         private const val PHONE = "phone"
         private const val WEBSITE = "website"
         private const val IMAGE = "image"
-        private const val MIN_BUDGET = "min_budget"
-        private const val MAX_BUDGET = "max_budget"
+        private const val BUDGET = "budget"
         private const val GEOLOC = "geoloc"
 
         private val OBJECT_MAPPER = jacksonObjectMapper()
@@ -72,8 +70,7 @@ data class Corporation(
                 dynamoDbResult[PHONE]!!.s,
                 dynamoDbResult[WEBSITE]!!.s,
                 dynamoDbResult[IMAGE]!!.s,
-                dynamoDbResult[MIN_BUDGET]!!.n.toLong(),
-                dynamoDbResult[MAX_BUDGET]!!.n.toLong(),
+                dynamoDbResult[BUDGET]!!.n.toLong(),
                 geoLoc
             )
         }
@@ -94,8 +91,7 @@ data class Corporation(
             EMAIL to AttributeValue(email),
             PHONE to AttributeValue(phone),
             IMAGE to AttributeValue(image),
-            MIN_BUDGET to AttributeValue().withN(minBudget.toString()),
-            MAX_BUDGET to AttributeValue().withN(maxBudget.toString()),
+            BUDGET to AttributeValue().withN(budget.toString()),
             GEOLOC to AttributeValue(OBJECT_MAPPER.writeValueAsString(geoLocation))
         )
     }
