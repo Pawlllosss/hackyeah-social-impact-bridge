@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import org.springframework.stereotype.Repository
 import pl.hackyeah.backend.entity.Corporation
+import pl.hackyeah.backend.entity.CorporationSearchableObject
 
 @Repository
 class CorporationRepository(
@@ -35,7 +36,8 @@ class CorporationRepository(
         val itemValues = corporation.toMap()
         val result = dynamoDb.putItem(CORPORATIONS_TABLE, itemValues)
 
-        val jsonObject = getAsJsonObject(corporation)
+        val corporationSearchableObject = CorporationSearchableObject.fromCorporation(corporation)
+        val jsonObject = getAsJsonObject(corporationSearchableObject)
 
         runBlocking {
             searchClient.saveObject(CORPORATIONS_INDEX, jsonObject)
@@ -44,8 +46,8 @@ class CorporationRepository(
         return corporation.corporateId
     }
 
-    private fun getAsJsonObject(corporation: Corporation): JsonObject {
-        val jsonElement = Json.encodeToJsonElement(corporation)
+    private fun getAsJsonObject(corporationSearchableObject: CorporationSearchableObject): JsonObject {
+        val jsonElement = Json.encodeToJsonElement(corporationSearchableObject)
         return jsonElement as JsonObject
     }
 }
