@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 import java.time.Instant
-import java.util.*
 
 
 @DynamoDBTable(tableName = "corporations")
@@ -21,6 +20,10 @@ data class Corporation(
     val categories: List<String>,
     @Serializable(with = InstantSerializer::class) val deadline: Instant,
     val city: String,
+    val krs: String,
+    val email: String,
+    val phone: String,
+    val website: String,
     val image: String,
     @SerializedName("min_budget") val minBudget: Long,
     @SerializedName("max_budget") val maxBudget: Long,
@@ -37,6 +40,10 @@ data class Corporation(
         private const val DESC = "desc"
         private const val CATEGORIES = "categories"
         private const val CITY = "city"
+        private const val KRS = "KRS"
+        private const val EMAIL = "email"
+        private const val PHONE = "phone"
+        private const val WEBSITE = "website"
         private const val IMAGE = "image"
         private const val MIN_BUDGET = "min_budget"
         private const val MAX_BUDGET = "max_budget"
@@ -60,6 +67,10 @@ data class Corporation(
                 categories,
                 Instant.parse(deadline),
                 dynamoDbResult[CITY]!!.s,
+                dynamoDbResult[KRS]!!.s,
+                dynamoDbResult[EMAIL]!!.s,
+                dynamoDbResult[PHONE]!!.s,
+                dynamoDbResult[WEBSITE]!!.s,
                 dynamoDbResult[IMAGE]!!.s,
                 dynamoDbResult[MIN_BUDGET]!!.n.toLong(),
                 dynamoDbResult[MAX_BUDGET]!!.n.toLong(),
@@ -78,6 +89,10 @@ data class Corporation(
             DESC to AttributeValue(desc),
             CATEGORIES to AttributeValue().withL(categories.map { AttributeValue(it) }),
             CITY to AttributeValue(city),
+            KRS to AttributeValue(krs),
+            WEBSITE to AttributeValue(website),
+            EMAIL to AttributeValue(email),
+            PHONE to AttributeValue(phone),
             IMAGE to AttributeValue(image),
             MIN_BUDGET to AttributeValue().withN(minBudget.toString()),
             MAX_BUDGET to AttributeValue().withN(maxBudget.toString()),
